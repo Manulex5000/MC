@@ -25,7 +25,6 @@ def calcular_incertidumbre(data):
         # MF = float(data.get('MF', 0))
         Tamb = float(data.get('Tamb', 0))
         TOV = float(data.get('TOV', 0))
-        FW = float(data.get('FW', 0))
         SW = float(data.get('SW', 0) or 0)/100
 
         # --------Entradas de incertidumbre---------
@@ -43,6 +42,7 @@ def calcular_incertidumbre(data):
         ucalPL = float(data.get('ucalPl', 0))
         kcalPL = float(data.get('kcalPl', 0))
         uderPL = float(data.get('uderPl', 0))
+
         # -------------%SW-----------
         metSW = data.get('metSW', 'externo')
         uTSed = float(data.get('uTSed', 0))

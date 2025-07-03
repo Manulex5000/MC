@@ -77,13 +77,14 @@ def montecarloU(data):
         uTW = float(data.get('uTW', 0))
         kTW = float(data.get('kTW', 0))
         kSed = float(data.get('kSed', 0))
+        FW = float(data.get('FW', 0))
+        uFW = float(data.get('uFW', 0))
         # -------------densidad-----------
         metdl = data.get('metdl', 'externo')
         uTdl = float(data.get('uTdl', 0))
         kTdl = float(data.get('kdl', 0))
         # -------------volumen-----------
         uTOV = float(data.get('uTOV', 0))
-        uFW = float(data.get('FW', 0))
         ucalMet = float(data.get('ucalMet', 0))
         kcalMet = float(data.get('kcalMet', 0))
         ecalMet = float(data.get('ecalMet', 0))

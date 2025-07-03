@@ -6,9 +6,9 @@ from calculos.modelosU import montecarloU
 import matplotlib.pyplot as plt
 
 data = {
-    "nsim": 100000,  # Número de simulaciones
+    "nsim": 1000000,  # Número de simulaciones
     # "tipoMet": "UFM",
-    "API": 129.61,  # Gravedad API
+    "API": 16.5,  # Gravedad API
     "product": "Crude Oil",  # Tipo de producto
     "Tl": 91.4,  # T° del líquido
     "Pl": 72,  # Presión del líquido
@@ -37,6 +37,8 @@ data = {
     "uTW": 0.01,  # Incertidumbre estándar de agua
     "kTW": 2.0,  # Factor de cobertura de agua
     "kSed": 2.0,  # Factor de cobertura de sedimentos
+    "FW": 0,  # Nivel de agua libre
+    "uFW": 1.5,  # Incertidumbre del nivel de agua libre
 
     "metdl": "externo",  # Densidad del líquido en el medidor
     "uTdl": 1,  # Incertidumbre estándar de densidad de líquido
@@ -47,9 +49,9 @@ data = {
     "ecalMet": 0.5,  # error de calibración del medidor
 
     "conditioner": "con acondicionador",  # equipos de acondicionamiento
-    "upLong": 10,
-    "dwLong": 5,
-    "twLong": 3
+    "upLong": 10,  # Longitud aguas arriba
+    "dwLong": 5,  # Longitud aguas abajo
+    "twLong": 3  # Longitud
 }
 
 

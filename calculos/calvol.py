@@ -1,4 +1,4 @@
-from propLiq import Constants, calcular_densidad, calcular_CTL
+from calculos.propLiq import Constants, calcular_densidad, calcular_CTL
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
