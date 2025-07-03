@@ -1,19 +1,23 @@
-import math
-from calculos.propLiq import Constants, calcular_densidad, calcular_CTL, calcular_CPL
+from propLiq import Constants, calcular_densidad, calcular_CTL
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+API = 15
 Pb = 14.65  # Base pressure, psi (from API Reference)
 Tref = 60.0  # Reference Temperature, °F (from API Reference)
 corr = 0.01374979547  # Temperature shift value (from API Reference)
-dH2O = 999.016
-corrCTL = 0
-corrCPL = 0
-TOV = 435.73
-FW = 0
-Tb = 60
-Tamb = 60
-Tl = 91
+dH2O = 999.016  # Densidad del agua en kg/m³
+corrCTL = 0.98847
+# corrCPL = 0
+TOV = 435.73  # Volumen total observado en [Bbl]
+FW = 0  # Volumen de agua libre en [Bbl]
+Tb = 60  # Temperatura base en °F (de referencia)
+Tamb = 60  # Temperatura ambiente en °F (de referencia)
+Tl = 91     # Temperatura del líquido en °F
+SW = 5  # Porcentaje de agua en el líquido (en %)
+# Material del tanque, puede ser "Acero al Carbón", "Acero Inoxidable 304" o "Acero Inoxidable 316"
 material = "Acero al Carbón"
-
 
 # Sediment and Water Correction
 
@@ -28,8 +32,8 @@ def NSV(MR, KF, MF, CTL, CPL, CSW, corrCTL, corrCPL):
     return MR / KF * MF * (CTL + corrCTL) * (CPL + corrCPL) * CSW
 
 
-def TK(TOV, FW, CTSh, CTL):
-    return (TOV - FW) * CTSh * CTL
+def TK(TOV, FW, CTSh, CTL, CSW):
+    return (TOV - FW) * CTSh * CTL * CSW
 
 
 def CTSh(material, Tamb, Tl):
@@ -51,7 +55,7 @@ def calcular_volumen(data):
 
         print("📡 Datos recibidos:", data)  # ✅ Depuración
 
-        API = float(data.get('API', 0))
+        # API = float(data.get('API', 0))
         product = data.get('product', 'Crude Oil')
         Tl = float(data.get('Tl', 0))
         # Pl = float(data.get('Pl', 0))
@@ -62,6 +66,7 @@ def calcular_volumen(data):
         SW = float(data.get('SW', 0) or 0)/100
         TOV = float(data.get('TOV', 0))
         FW = float(data.get('FW', 0))
+        Tamb = float(data.get('Tamb', 0))
 
         print("✅ Variables extraídas correctamente")
 
@@ -88,7 +93,7 @@ def calcular_volumen(data):
         # CSW
         CSW_value = CSW(SW)
         # NSV
-        NSV_value = TK(TOV, FW, CTSh_value, CTL_value)
+        NSV_value = TK(TOV, FW, CTSh_value, CTL_value, CSW_value)
 
         print(f"✅ NSV calculado: {NSV_value}")
 
@@ -99,8 +104,8 @@ def calcular_volumen(data):
         return {
             "NSV": round(NSV_value, 4),
             "CTL": round(CTL_value, 4),
-            "CPL": round(CPL_value, 4),
-            "dl": round(dl_value, 4)
+            # CPL": round(CPL_value, 4),
+            # "dl": round(dl_value, 4)
         }
 
     except Exception as e:

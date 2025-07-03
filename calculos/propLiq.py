@@ -1,4 +1,3 @@
-
 import math
 import numpy as np
 
@@ -6,7 +5,7 @@ Pb = 14.65  # Base pressure, psi (from API Reference)
 Tref = 60.0  # Reference Temperature, °F
 corr = 0.01374979547  # Temperature shift value
 dH2O = 999.016  # Water density in kg/m³
-
+API = 15
 # 📌 SELECCIÓN DE CONSTANTES
 
 
@@ -115,7 +114,7 @@ def calcular_propiedades(data):
         Pe = float(data.get('Pe', 0))
 
         # 🔹 Cálculo de la densidad
-        dl_value = calcular_densidad(API)
+        dl_value = calcular_densidad(API, dH2O)
 
         # 🔹 Obtener constantes según el producto
         K0, K1, K2 = Constants(product, dl_value, Tl)

@@ -2,7 +2,7 @@ import numpy as np
 import math
 from calculos.propLiq import Constants, calcular_densidad, calcular_CTL, calcular_CPL
 from calculos.instOper import InstalLiqDin
-from calculos.calvol import CSW, NSV
+from calculos.calvol import CSW
 
 Pb = 14.65  # Base pressure, psi (from API Reference)
 Tref = 87.0  # Reference Temperature, °F
@@ -19,18 +19,19 @@ def u_simul(un, dist, nsim):
         u = np.random.triangular(-un, 0, un, nsim)
     elif dist == "lognormal":
         u = np.random.lognormal(0, un, nsim)
+    else:
+        u = np.zeros(nsim)
     return u
 
 
-def u_magntiud(nsim, Media, ur1, dist="normal", ur2=0, dist2="uniforme", ur3=0, dist3="uniforme", ur4=0, dist4="uniforme", ur5=0, dist5="uniforme"):
-
-    u1 = u_simul(ur1, dist, nsim)
+def u_magntiud(nsim, Media, ur1, dist1, ur2, dist2, ur3, dist3, ur4=None, dist4=None, ur5=None, dist5=None):
+    u1 = u_simul(ur1, dist1, nsim)
     u2 = u_simul(ur2, dist2, nsim)
     u3 = u_simul(ur3, dist3, nsim)
     u4 = u_simul(ur4, dist4, nsim)
     u5 = u_simul(ur5, dist5, nsim)
 
-    simul = Media+u1+u2+u3+u4+u5
+    simul = Media + u1 + u2 + u3 + u4 + u5
 
     return simul
 
@@ -46,7 +47,7 @@ def montecarloU(data):
 
         print(" Datos recibidos en Flask:", data)  # ✅ Depuración
         n_sim = int(float(data.get('nsim', 0)))
-        tipoMet = data.get('tipoMet')
+        # tipoMet = data.get('tipoMet')
         API = float(data.get('API', 0))
         product = data.get('product', 'Crude Oil')
         Tl = float(data.get('Tl', 0))
@@ -137,7 +138,7 @@ def montecarloU(data):
         uinstV = InstalLiqDin(tipoMet, conditioner, uplong)*MR/100
         uoperV = 0
         simul_MR = u_magntiud(n_sim, MR, ucalV, "normal", uerrorV,
-                              "uniforme", uinstV, "uniforme", uoperV, "uniforme")
+                              "uniforme", "uniforme", "uniforme")
 
         print(simul_MR)
 
@@ -187,19 +188,21 @@ def montecarloU(data):
 
         # CSW
         CSW_value = CSW(simul_sw)
-        # NSV
-        NSV_value = NSV(simul_MR, KF, MF, CTL_value,
+        # GSV
+        GSV_value = GSV(simul_MR, KF, MF, CTL_value,
                         CPL_value, CSW_value, corrCTL, corrCPL)
 
-        print(f"✅ NSV calculado: {NSV_value}")
+        print(f"✅ GSV calculado: {GSV_value}")
 
-        print(f"✅ NSV convertido a float correctamente")
+        print(f"✅ GSV convertido a float correctamente")
 
         return {
-            "NSV": np.round(NSV_value, 4),
+            "GSV": np.round(GSV_value, 4),
             "CTL": np.round(CTL_value, 4),
             "CPL": np.round(CPL_value, 4),
-            "dl": np.round(dl_value, 4)
+            "dl": np.round(dl_value, 4),
+            "NSV": GSV_value
+
         }
 
     except Exception as e:
